@@ -1,4 +1,4 @@
-package com.jeffery.garmin_sleep;
+package com.jeffery.garmin_sleep.controller;
 
 import com.jeffery.garmin_sleep.model.SleepRespiration;
 import com.jeffery.garmin_sleep.model.SleepStageSegment;
