@@ -1,2 +1,35 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# ========= 全域換行規則（強烈建議開） =========
+* text=auto
+
+# ========= 指定類型為 LF（跨平台一致） =========
+*.java     text eol=lf
+*.xml      text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.json     text eol=lf
+*.md       text eol=lf
+*.js       text eol=lf
+*.jsx      text eol=lf
+*.ts       text eol=lf
+*.tsx      text eol=lf
+*.css      text eol=lf
+*.scss     text eol=lf
+*.sh       text eol=lf
+*.html     text eol=lf
+
+# ========= Windows 批次檔（保留 CRLF） =========
+*.cmd      text eol=crlf
+*.bat      text eol=crlf
+
+# ========= Binary 檔案禁止轉換 =========
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.pdf      binary
+*.jar      binary
+*.zip      binary
+*.gz       binary
+*.woff     binary
+*.woff2    binary

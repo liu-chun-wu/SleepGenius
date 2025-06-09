@@ -1,33 +1,30 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# ========= 通用 Git 忽略設定 =========
+.DS_Store
+Thumbs.db
+*.log
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+# ========= IntelliJ / JetBrains 專案設定 =========
+.idea/
 *.iml
-*.ipr
+out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# ========= Maven - backend/ 專案 =========
+/backend/target/
+/backend/.classpath
+/backend/.project
+/backend/.settings/
+/backend/.mvn/wrapper/maven-wrapper.jar
+/backend/.mvn/wrapper/maven-wrapper.properties
 
-### VS Code ###
-.vscode/
+# ========= Node / React - frontend/ 專案 =========
+/frontend/node_modules/
+/frontend/build/
+/frontend/dist/
+/frontend/.env
+/frontend/.env.*
+
+# ========= 作業系統雜項 =========
+*.swp
+*.swo
+*.tmp
+*.bak
