@@ -1,4 +1,4 @@
-package com.jeffery.garmin_sleep;
+package com.jeffery.garmin_sleep.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
