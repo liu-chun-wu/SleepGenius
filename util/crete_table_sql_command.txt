@@ -1,0 +1,29 @@
+CREATE TABLE sleep_summary (
+    summary_id VARCHAR(50) PRIMARY KEY,
+    date DATE NOT NULL,
+    total_duration INT,
+    deep_sleep INT,
+    light_sleep INT,
+    rem_sleep INT,
+    awake_sleep INT,
+    overall_score INT,
+    score_qualifier VARCHAR(20)
+);
+
+CREATE TABLE sleep_stage_segments (
+    id SERIAL PRIMARY KEY,
+    summary_id VARCHAR(50),
+    stage_type VARCHAR(20), -- 'light', 'deep', 'rem'
+    start_time BIGINT,
+    end_time BIGINT,
+    duration INT,
+    FOREIGN KEY (summary_id) REFERENCES sleep_summary(summary_id)
+);
+
+CREATE TABLE sleep_respiration (
+    id SERIAL PRIMARY KEY,
+    summary_id VARCHAR(50),
+    offset_seconds INT,
+    respiration_rate FLOAT,
+    FOREIGN KEY (summary_id) REFERENCES sleep_summary(summary_id)
+);
