@@ -36,8 +36,8 @@ public class GeminiChatService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "該日期無資料"));
 
         String summaryId = summary.getSummaryId();
-        List<SleepStageSegment> stages = stageRepo.findBySummaryId(summaryId);
-        List<SleepRespiration> respiration = respirationRepo.findBySummaryId(summaryId);
+        List<SleepStageSegment> stages = stageRepo.findBySleepSummary_SummaryId(summaryId);
+        List<SleepRespiration> respiration = respirationRepo.findBySleepSummary_SummaryId(summaryId);
 
         String prompt = buildPrompt(summary, stages, respiration, question);
         String answer = callGeminiApi(prompt);

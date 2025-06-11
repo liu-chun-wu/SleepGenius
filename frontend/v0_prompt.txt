@@ -1,0 +1,21 @@
+Create a React UI page with the following layout:
+
+- At the top, a Date Picker (default today) for selecting sleep date
+- Below it, a Textarea for typing a question, and a Submit button next to it
+- Below that, show:
+  - A card displaying overall sleep score and total duration
+  - A line chart showing respiration rate over time
+  - A bar chart showing sleep stages (deep, light, rem) with time ranges
+  - A chatbot response card showing answer, recommendation, and score
+
+Style should be clean, with padding and spacing. Use TailwindCSS.
+
+Create a section in a React + Tailwind interface for uploading a CSV file.
+
+Use a card layout.
+Include a title "Upload Sleep CSV".
+Add a file input that accepts .csv files.
+Include a button labeled "Upload".
+Below the upload button, reserve a space to display upload status (e.g., "Uploaded successfully" or error).
+Place this card below the chat/question section.
+The design should be minimal and fit seamlessly with the rest of a sleep analysis dashboard.

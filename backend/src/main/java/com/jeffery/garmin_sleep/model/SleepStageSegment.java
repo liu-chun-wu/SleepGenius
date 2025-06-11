@@ -14,12 +14,13 @@ public class SleepStageSegment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String summaryId;
-
     private String stageType; // light, deep, rem
-
     private Long startTime;
     private Long endTime;
     private int duration;
+
+    @ManyToOne
+    @JoinColumn(name = "summary_id") // <== 跟你資料表一致
+    private SleepSummary sleepSummary;
 
 }

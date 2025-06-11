@@ -14,10 +14,12 @@ public class SleepRespiration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String summaryId;
-
     private int offsetSeconds;
     private float respirationRate;
+
+    @ManyToOne
+    @JoinColumn(name = "summary_id") // <== 跟你資料表一致
+    private SleepSummary sleepSummary;
 
 }
 

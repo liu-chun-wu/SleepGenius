@@ -1,7 +1,7 @@
 package com.jeffery.garmin_sleep.controller;
 
-import com.jeffery.garmin_sleep.model.SleepRespiration;
-import com.jeffery.garmin_sleep.model.SleepStageSegment;
+import com.jeffery.garmin_sleep.dto.RespirationDTO;
+import com.jeffery.garmin_sleep.dto.SleepStageSegmentDTO;
 import com.jeffery.garmin_sleep.model.SleepSummary;
 import com.jeffery.garmin_sleep.repository.SleepRespirationRepository;
 import com.jeffery.garmin_sleep.repository.SleepStageSegmentRepository;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -40,25 +41,34 @@ public class BackendController {
         return ResponseEntity.ok(sleepSummaryRepository.findAll());
     }
 
-    @GetMapping("/sleep-summary/{summaryId}")
-    public ResponseEntity<SleepSummary> getSummaryById(@PathVariable String summaryId) {
-        return sleepSummaryRepository.findById(summaryId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // 查詢指定日期的摘要
+    @GetMapping("/sleep-summary/{date}")
+    public Optional<SleepSummary> getSummaryByDate(@PathVariable String date) {
+        return sleepSummaryRepository.findByDate(LocalDate.parse(date));
     }
 
-    @GetMapping("/sleep-summary/best")
-    public ResponseEntity<SleepSummary> getBestSleep() {
-        return ResponseEntity.ok(sleepSummaryRepository.findBestSleep());
+    @GetMapping("/sleep-stages/{date}")
+    public List<SleepStageSegmentDTO> getStagesByDate(@PathVariable String date) {
+        return sleepStageSegmentRepository.findBySleepSummary_Date(LocalDate.parse(date)).stream()
+                .map(s -> new SleepStageSegmentDTO(
+                        s.getStageType(),
+                        s.getStartTime(),
+                        s.getEndTime(),
+                        s.getDuration(),
+                        s.getSleepSummary().getSummaryId()
+                ))
+                .toList();
     }
 
-    @GetMapping("/sleep-stages/{summaryId}")
-    public ResponseEntity<List<SleepStageSegment>> getStagesBySummaryId(@PathVariable String summaryId) {
-        return ResponseEntity.ok(sleepStageSegmentRepository.findBySummaryId(summaryId));
-    }
-
-    @GetMapping("/sleep-respiration/{summaryId}")
-    public ResponseEntity<List<SleepRespiration>> getRespirationBySummaryId(@PathVariable String summaryId) {
-        return ResponseEntity.ok(sleepRespirationRepository.findBySummaryId(summaryId));
+    @GetMapping("/sleep-respiration/{date}")
+    public List<RespirationDTO> getRespirationByDate(@PathVariable String date) {
+        return sleepRespirationRepository.findBySleepSummary_Date(LocalDate.parse(date)).stream()
+                .map(r -> new RespirationDTO(
+                        r.getOffsetSeconds(),
+                        r.getRespirationRate(),
+                        r.getSleepSummary().getSummaryId(),
+                        r.getSleepSummary().getDate().toString() // ✅ 把日期也傳出
+                ))
+                .toList();
     }
 }
