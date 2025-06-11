@@ -58,44 +58,53 @@ const RespirationChart = ({ date }: RespirationChartProps) => {
       <h2 className="text-lg font-medium text-gray-800 mb-2">Respiration Rate</h2>
       <div className="text-sm text-gray-500 mb-4">{formatDate(date)}</div>
 
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-            <defs>
-              <linearGradient id="respirationGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#6366f1" stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="time" stroke="#64748b" fontSize={12} interval={Math.floor(data.length / 8)} />
-            <YAxis
-              stroke="#64748b"
-              fontSize={12}
-              domain={["dataMin - 1", "dataMax + 1"]}
-              label={{ value: "Breaths/min", angle: -90, position: "insideLeft" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="rate"
-              stroke="#6366f1"
-              strokeWidth={3}
-              dot={false}
-              activeDot={{
-                r: 6,
-                stroke: "#6366f1",
-                strokeWidth: 2,
-                fill: "#ffffff",
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
-              }}
-              filter="drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      {data.length === 0 ? (
+        <div className="h-64 flex items-center justify-center text-gray-500 text-sm italic">
+          這天沒有睡眠資料
+        </div>
+      ) : (
+        <>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <defs>
+                  <linearGradient id="respirationGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="time" stroke="#64748b" fontSize={12} interval={Math.floor(data.length / 8)} />
+                <YAxis
+                  stroke="#64748b"
+                  fontSize={12}
+                  domain={["dataMin - 1", "dataMax + 1"]}
+                  label={{ value: "Breaths/min", angle: -90, position: "insideLeft" }}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="rate"
+                  stroke="#6366f1"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{
+                    r: 6,
+                    stroke: "#6366f1",
+                    strokeWidth: 2,
+                    fill: "#ffffff",
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+                  }}
+                  filter="drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
     </div>
   )
+
 }
 
 export default RespirationChart

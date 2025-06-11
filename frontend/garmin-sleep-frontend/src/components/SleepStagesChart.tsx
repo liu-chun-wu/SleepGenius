@@ -72,13 +72,13 @@ export default function SleepStagesChart({ date }: SleepStagesChartProps) {
       })
 
       // ✅ 排序後，觀察順序
-      transformed.sort((a, b) => a.start - b.start)
+      transformed.sort((a: { start: number }, b: { start: number }) => a.start - b.start)
 
       setSegments(transformed)
 
       if (transformed.length) {
         const minStart = transformed[0].start
-        const maxEnd = Math.max(...transformed.map((s) => s.end))
+        const maxEnd = Math.max(...transformed.map((s: { end: any }) => s.end))
 
         const padding = 10
         const left = Math.max(minStart - padding, 0)
@@ -244,6 +244,17 @@ export default function SleepStagesChart({ date }: SleepStagesChartProps) {
           </ResponsiveContainer>
         </div>
       )}
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
+        {["deep", "light", "rem", "awake"].map((type) => (
+          <div key={type} className="flex items-center space-x-2">
+            <div
+              className="w-4 h-4 rounded"
+              style={{ backgroundColor: sleepStageColors[type] }}
+            />
+            <span>{stageLabels[type]}</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

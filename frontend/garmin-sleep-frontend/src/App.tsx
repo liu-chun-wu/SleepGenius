@@ -5,6 +5,7 @@ import SleepMetricsCard from "@/components/SleepMetricsCard"
 import RespirationChart from "@/components/RespirationChart"
 import SleepStagesChart from "@/components/SleepStagesChart"
 import ChatbotResponse from "@/components/ChatbotResponse"
+import SleepStagePieChart from "@/components/SleepStagePieChart"
 import CsvUpload from "@/components/CsvUpload"
 import { formatDate } from "@/utils/dateUtils"
 
@@ -56,7 +57,7 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <SleepStagesChart date={selectedDate} />
-          <ChatbotResponse response={chatbotResponse} />
+          <SleepStagePieChart date={selectedDate} />
         </div>
 
         {/* CSV Upload Section */}
