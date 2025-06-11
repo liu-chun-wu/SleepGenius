@@ -6,12 +6,10 @@ import com.jeffery.garmin_sleep.model.SleepSummary;
 import com.jeffery.garmin_sleep.repository.SleepRespirationRepository;
 import com.jeffery.garmin_sleep.repository.SleepStageSegmentRepository;
 import com.jeffery.garmin_sleep.repository.SleepSummaryRepository;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

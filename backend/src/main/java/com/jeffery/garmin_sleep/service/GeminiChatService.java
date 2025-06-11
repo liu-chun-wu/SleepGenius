@@ -5,14 +5,14 @@ import com.jeffery.garmin_sleep.model.SleepRespiration;
 import com.jeffery.garmin_sleep.model.SleepStageSegment;
 import com.jeffery.garmin_sleep.model.SleepSummary;
 import com.jeffery.garmin_sleep.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import org.springframework.web.server.ResponseStatusException;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +35,8 @@ public class GeminiChatService {
         SleepSummary summary = summaryRepo.findByDate(date)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "該日期無資料"));
 
-        String summaryId = summary.getSummaryId();
-        List<SleepStageSegment> stages = stageRepo.findBySleepSummary_SummaryId(summaryId);
-        List<SleepRespiration> respiration = respirationRepo.findBySleepSummary_SummaryId(summaryId);
+        List<SleepStageSegment> stages = stageRepo.findBySleepSummary_Date(date);
+        List<SleepRespiration> respiration = respirationRepo.findBySleepSummary_Date(date);
 
         String prompt = buildPrompt(summary, stages, respiration, question);
         String answer = callGeminiApi(prompt);

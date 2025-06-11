@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface SleepRespirationRepository extends JpaRepository<SleepRespiration, Long> {
-    List<SleepRespiration> findBySleepSummary_SummaryId(String summaryId);
-
     List<SleepRespiration> findBySleepSummary_Date(LocalDate sleepSummaryDate);
 
 }

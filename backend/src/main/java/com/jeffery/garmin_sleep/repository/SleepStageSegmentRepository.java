@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface SleepStageSegmentRepository extends JpaRepository<SleepStageSegment, Long> {
-    List<SleepStageSegment> findBySleepSummary_SummaryId(String summaryId);
-
     List<SleepStageSegment> findBySleepSummary_Date(LocalDate sleepSummaryDate);
 
 }
