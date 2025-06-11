@@ -10,39 +10,35 @@ const RespirationChart = ({ date }: RespirationChartProps) => {
   const [data, setData] = useState<Array<{ time: string; rate: number; hour: number }>>([])
 
   useEffect(() => {
-    // Generate more detailed mock data for smoother curves (every 30 minutes)
-    const mockData = Array.from({ length: 48 }, (_, i) => {
-      const totalMinutes = i * 30 // Every 30 minutes
-      const hour = Math.floor(totalMinutes / 60)
-      const minutes = totalMinutes % 60
-      const formattedHour = hour % 24
-      const period = formattedHour >= 12 ? "PM" : "AM"
-      const displayHour = formattedHour % 12 || 12
+    const fetchRespiration = async () => {
+      const formattedDate = formatDate(date) // "2025-06-11"
+      const res = await fetch(`/api/sleep-respiration/${formattedDate}`)
+      const raw = await res.json()
 
-      const timeString =
-        minutes === 0 ? `${displayHour}${period}` : `${displayHour}:${minutes.toString().padStart(2, "0")}${period}`
+      const transformed = raw.map((item: any) => {
+        const baseDate = new Date(`${formattedDate}T00:00:00`)
+        const timestamp = new Date(baseDate.getTime() + item.offsetSeconds * 1000)
 
-      // Create realistic respiration patterns with smooth transitions
-      let baseRate = 14
-      const timeOfDay = (hour + minutes / 60) % 24
+        const hours = timestamp.getHours()
+        const minutes = timestamp.getMinutes()
+        const ampm = hours >= 12 ? "PM" : "AM"
+        const displayHour = hours % 12 || 12
+        const timeString =
+          minutes === 0
+            ? `${displayHour}${ampm}`
+            : `${displayHour}:${minutes.toString().padStart(2, "0")}${ampm}`
 
-      if (timeOfDay >= 22 || timeOfDay <= 7) {
-        // Sleep hours - create a smooth sine wave pattern for natural breathing
-        const sleepProgress = timeOfDay >= 22 ? (timeOfDay - 22) / 9 : (timeOfDay + 2) / 9
-        baseRate = 11 + 2 * Math.sin(sleepProgress * Math.PI * 4) + 1 * Math.cos(sleepProgress * Math.PI * 6)
-      } else {
-        // Awake hours - slightly higher with gentle variations
-        baseRate = 15 + 2 * Math.sin(timeOfDay * 0.5) + 1 * Math.cos(timeOfDay * 0.8)
-      }
+        return {
+          time: timeString,
+          hour: hours,
+          rate: parseFloat(item.respirationRate.toFixed(2)),
+        }
+      })
 
-      return {
-        time: timeString,
-        rate: Math.max(9, Math.min(18, baseRate + (Math.random() - 0.5) * 0.8)),
-        hour: hour,
-      }
-    })
+      setData(transformed)
+    }
 
-    setData(mockData)
+    fetchRespiration()
   }, [date])
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -97,23 +93,6 @@ const RespirationChart = ({ date }: RespirationChartProps) => {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 rounded-lg border border-blue-100">
-          <div className="text-blue-600 text-xs font-medium">Average Rate</div>
-          <div className="font-bold text-blue-800">
-            {data.length > 0 ? (data.reduce((sum, d) => sum + d.rate, 0) / data.length).toFixed(1) : "0"} bpm
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-lg border border-green-100">
-          <div className="text-green-600 text-xs font-medium">Sleep Quality</div>
-          <div className="font-bold text-green-800">Excellent</div>
-        </div>
-        <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-3 rounded-lg border border-purple-100">
-          <div className="text-purple-600 text-xs font-medium">Variability</div>
-          <div className="font-bold text-purple-800">Low</div>
-        </div>
       </div>
     </div>
   )
