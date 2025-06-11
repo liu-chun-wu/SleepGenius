@@ -163,7 +163,7 @@ export default function SleepStagesChart({ date }: SleepStagesChartProps) {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-full">
-      <h2 className="text-lg font-medium text-gray-800 mb-2">Sleep Stages</h2>
+      <h2 className="text-lg font-medium text-gray-800 mb-2">睡眠階段</h2>
       <div className="text-sm text-gray-500 mb-4">{formatDate(date)}</div>
 
       {loading ? (
@@ -244,17 +244,19 @@ export default function SleepStagesChart({ date }: SleepStagesChartProps) {
           </ResponsiveContainer>
         </div>
       )}
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
-        {["deep", "light", "rem", "awake"].map((type) => (
-          <div key={type} className="flex items-center space-x-2">
-            <div
-              className="w-4 h-4 rounded"
-              style={{ backgroundColor: sleepStageColors[type] }}
-            />
-            <span>{stageLabels[type]}</span>
-          </div>
-        ))}
-      </div>
+      {segments.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
+          {["deep", "light", "rem", "awake"].map((type) => (
+            <div key={type} className="flex items-center space-x-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: sleepStageColors[type] }}
+              />
+              <span>{stageLabels[type]}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

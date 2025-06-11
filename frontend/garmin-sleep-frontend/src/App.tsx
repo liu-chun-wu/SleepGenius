@@ -1,7 +1,7 @@
 import { useState } from "react"
 import DatePicker from "@/components/DatePicker"
 import QuestionInput from "@/components/QuestionInput"
-import SleepMetricsCard from "@/components/SleepMetricsCard"
+import SleepSummary from "@/components/SleepSummary"
 import RespirationChart from "@/components/RespirationChart"
 import SleepStagesChart from "@/components/SleepStagesChart"
 import ChatbotResponse from "@/components/ChatbotResponse"
@@ -51,7 +51,7 @@ function App() {
 
         {/* Sleep Metrics and Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <SleepMetricsCard sleepScore={87} sleepDuration={7.5} date={selectedDate} />
+          <SleepSummary date={selectedDate} />
           <RespirationChart date={selectedDate} />
         </div>
 

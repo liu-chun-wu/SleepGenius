@@ -55,7 +55,7 @@ const RespirationChart = ({ date }: RespirationChartProps) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-full">
-      <h2 className="text-lg font-medium text-gray-800 mb-2">Respiration Rate</h2>
+      <h2 className="text-lg font-medium text-gray-800 mb-2">呼吸率</h2>
       <div className="text-sm text-gray-500 mb-4">{formatDate(date)}</div>
 
       {data.length === 0 ? (

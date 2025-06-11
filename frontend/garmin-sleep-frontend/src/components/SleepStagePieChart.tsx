@@ -78,11 +78,16 @@ const SleepStagePieChart = ({ date }: SleepStagePieChartProps) => {
 
     if (data.length === 0) {
         return (
-            <div className="bg-white p-6 rounded-lg shadow-md h-full flex items-center justify-center">
-                <span className="text-gray-400">這天沒有睡眠資料</span>
+            <div className="bg-white p-6 rounded-lg shadow-md h-full">
+                <h2 className="text-lg font-medium text-gray-800 mb-1">睡眠階段比例</h2>
+                <p className="text-sm text-gray-400 mb-4">{formatDate(date)}</p>
+                <div className="flex items-center justify-center h-40">
+                    <span className="text-gray-400">這天沒有睡眠資料</span>
+                </div>
             </div>
         )
     }
+
 
     const total = data.reduce((sum, d) => sum + d.duration, 0)
 
@@ -95,7 +100,7 @@ const SleepStagePieChart = ({ date }: SleepStagePieChartProps) => {
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md h-full">
-            <h2 className="text-lg font-medium text-gray-800 mb-4">Sleep Stages Ratio</h2>
+            <h2 className="text-lg font-medium text-gray-800 mb-4">睡眠階段比例</h2>
             <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                     <Pie
