@@ -17,11 +17,11 @@ out/
 /backend/.mvn/wrapper/maven-wrapper.properties
 
 # ========= Node / React - frontend/ 專案 =========
-/frontend/node_modules/
-/frontend/build/
-/frontend/dist/
-/frontend/.env
-/frontend/.env.*
+/frontend/garmin-sleep-frontend/node_modules/
+/frontend/garmin-sleep-frontend/build/
+/frontend/garmin-sleep-frontend/dist/
+/frontend/garmin-sleep-frontend/.env
+/frontend/garmin-sleep-frontend/.env.*
 
 # ========= 作業系統雜項 =========
 *.swp
