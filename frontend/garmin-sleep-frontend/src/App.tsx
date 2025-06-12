@@ -1,38 +1,22 @@
+// App.tsx：主頁面，已將 ChatbotConversation 區塊抽出
 import { useState } from "react"
 import DatePicker from "@/components/DatePicker"
-import QuestionInput from "@/components/QuestionInput"
 import SleepSummary from "@/components/SleepSummary"
 import RespirationChart from "@/components/RespirationChart"
 import SleepStagesChart from "@/components/SleepStagesChart"
-import ChatbotResponse from "@/components/ChatbotResponse"
 import SleepStagePieChart from "@/components/SleepStagePieChart"
 import CsvUpload from "@/components/CsvUpload"
-import { formatDate } from "@/utils/dateUtils"
+import ChatbotConversation from "@/components/ChatbotConversation"
 
 function App() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [question, setQuestion] = useState<string>("")
-  const [chatbotResponse, setChatbotResponse] = useState<{
-    answer: string
-    recommendation: string
-    confidence: number
-  } | null>(null)
 
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date)
-  }
+  const handleDateChange = (dateString: string) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    const localDate = new Date(year, month - 1, day);  // month - 1 因為 JS 月份從 0 開始
+    setSelectedDate(localDate);
+  };
 
-  const handleQuestionSubmit = (question: string) => {
-    setQuestion(question)
-    // Simulate API call with mock response
-    setTimeout(() => {
-      setChatbotResponse({
-        answer: `Based on your sleep data for ${formatDate(selectedDate)}, your question about "${question}" can be answered as follows: Your sleep was more restless than usual, with increased awakenings during the night.`,
-        recommendation: "Consider limiting screen time 2 hours before bed and maintaining a consistent sleep schedule.",
-        confidence: 8.5,
-      })
-    }, 1000)
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -41,12 +25,16 @@ function App() {
 
         {/* Date Picker Section */}
         <div className="mb-6">
-          <DatePicker selectedDate={selectedDate} onChange={handleDateChange} />
+          <div className="border rounded-lg shadow-sm p-4 bg-white">
+            <DatePicker selectedDate={selectedDate} onChange={handleDateChange} />
+          </div>
         </div>
 
-        {/* Question Input Section */}
+        {/* Chatbot Section */}
         <div className="mb-8">
-          <QuestionInput onSubmit={handleQuestionSubmit} />
+          <div className="border rounded-lg shadow-sm p-4 bg-white">
+            <ChatbotConversation selectedDate={selectedDate} />
+          </div>
         </div>
 
         {/* Sleep Metrics and Charts Section */}
