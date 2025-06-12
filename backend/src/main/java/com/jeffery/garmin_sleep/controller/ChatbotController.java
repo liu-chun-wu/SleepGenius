@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/api/chatbot")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ChatbotController {
 
     private final GeminiChatService geminiChatService;
 
-    @PostMapping("/query")
+    @PostMapping("/chatbot-query")
     public ResponseEntity<ChatbotResponse> query(@RequestBody ChatbotRequest request) {
         return ResponseEntity.ok(
                 geminiChatService.askGemini(request.getDate(), request.getQuestion())

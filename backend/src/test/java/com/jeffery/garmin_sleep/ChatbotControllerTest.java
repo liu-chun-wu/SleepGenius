@@ -39,8 +39,7 @@ public class ChatbotControllerTest {
 
         ChatbotResponse mockResponse = new ChatbotResponse(
                 "你那天的睡眠品質還不錯",
-                82,
-                "建議維持目前作息，效果良好"
+                82
         );
 
         when(geminiChatService.askGemini(request.getDate(), request.getQuestion()))
@@ -52,7 +51,6 @@ public class ChatbotControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.answer").value("你那天的睡眠品質還不錯"))
-                .andExpect(jsonPath("$.score").value(82))
-                .andExpect(jsonPath("$.recommendation").value("建議維持目前作息，效果良好"));
+                .andExpect(jsonPath("$.score").value(82));
     }
 }

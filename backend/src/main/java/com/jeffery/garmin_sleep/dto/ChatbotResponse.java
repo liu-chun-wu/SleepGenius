@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class ChatbotResponse {
     private String answer;
     private Integer score;
-    private String recommendation;
 }
