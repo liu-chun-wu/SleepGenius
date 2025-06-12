@@ -9,11 +9,11 @@ import CsvUpload from "@/components/CsvUpload"
 import ChatbotConversation from "@/components/ChatbotConversation"
 
 function App() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 初始為 null
 
   const handleDateChange = (dateString: string) => {
     const [year, month, day] = dateString.split("-").map(Number);
-    const localDate = new Date(year, month - 1, day);  // month - 1 因為 JS 月份從 0 開始
+    const localDate = new Date(year, month - 1, day);
     setSelectedDate(localDate);
   };
 
@@ -30,23 +30,28 @@ function App() {
           </div>
         </div>
 
-        {/* Chatbot Section */}
-        <div className="mb-8">
-          <div className="border rounded-lg shadow-sm p-4 bg-white">
-            <ChatbotConversation selectedDate={selectedDate} />
-          </div>
-        </div>
+        {selectedDate && (
+          <>
+            {/* Chatbot Section */}
+            <div className="mb-8">
+              <div className="border rounded-lg shadow-sm p-4 bg-white">
+                <ChatbotConversation selectedDate={selectedDate} />
+              </div>
+            </div>
 
-        {/* Sleep Metrics and Charts Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <SleepSummary date={selectedDate} />
-          <RespirationChart date={selectedDate} />
-        </div>
+            {/* Sleep Metrics and Charts Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <SleepSummary date={selectedDate} />
+              <RespirationChart date={selectedDate} />
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <SleepStagesChart date={selectedDate} />
-          <SleepStagePieChart date={selectedDate} />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <SleepStagesChart date={selectedDate} />
+              <SleepStagePieChart date={selectedDate} />
+            </div>
+          </>
+        )}
+
 
         {/* CSV Upload Section */}
         <div className="mb-8">

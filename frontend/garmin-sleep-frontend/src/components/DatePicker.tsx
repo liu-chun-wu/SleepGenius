@@ -3,7 +3,7 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import { formatDate } from "@/utils/dateUtils"
 
 interface DatePickerProps {
-  selectedDate: Date;
+  selectedDate: Date | null;
   onChange: (value: string) => void;
 }
 
@@ -16,10 +16,16 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }) => {
     fetch("/api/sleep-summary")
       .then((res) => res.json())
       .then((data) => {
-        const dates = data.map((d: any) => d.date);
+        const dates = data.map((d: any) => d.date).sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime());
         setAvailableDates(dates);
+
+        if (dates.length > 0) {
+          onChange(dates[0]); // 選擇最近有資料的日期（最新的日期）
+          setCurrentMonth(new Date(dates[0])); // 切換到該月顯示
+        }
       });
   }, []);
+
 
   const isToday = (day: number) => {
     const today = new Date();
@@ -83,7 +89,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }) => {
         {getDaysInMonth().map((day) => {
           const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
           const formatted = formatDate(date);
-          const isSelected = formatted === formatDate(selectedDate);
+          const isSelected = selectedDate && formatted === formatDate(selectedDate);
           const disabled = isFutureDate(day) || isUnavailable(day);
           return (
             <button
