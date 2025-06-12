@@ -1,14 +1,14 @@
 package com.jeffery.garmin_sleep.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "sleep_summary")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SleepSummary {
 
     @Id

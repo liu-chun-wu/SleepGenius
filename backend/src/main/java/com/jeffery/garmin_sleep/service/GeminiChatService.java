@@ -100,23 +100,6 @@ public class GeminiChatService {
         return prompt.toString();
     }
 
-
-//
-//    // epoch 轉字串時間（例如 23:07:15）
-//    private String epochToTime(long epoch, DateTimeFormatter tf) {
-//        LocalDateTime time = Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault()).toLocalDateTime();
-//        return time.format(tf);
-//    }
-//
-//    // 秒數轉為 h m s 可讀格式
-//    private String secondsToReadableTime(int seconds) {
-//        int h = seconds / 3600, m = (seconds % 3600) / 60, s = seconds % 60;
-//        StringBuilder sb = new StringBuilder();
-//        if (h > 0) sb.append(h).append("小時");
-//        if (m > 0) sb.append(m).append("分");
-//        if (s > 0) sb.append(s).append("秒");
-//        return sb.isEmpty() ? "0秒" : sb.toString();
-//    }
     private String toTime(long epochSeconds, DateTimeFormatter formatter) {
         LocalDateTime time = Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.systemDefault()).toLocalDateTime();
         return time.format(formatter);

@@ -1,13 +1,13 @@
 package com.jeffery.garmin_sleep.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "sleep_stage_segments")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SleepStageSegment {
 
     @Id
@@ -17,7 +17,7 @@ public class SleepStageSegment {
     private String stageType; // light, deep, rem
     private Long startTime;
     private Long endTime;
-    private int duration;
+    private Integer duration;
 
     @ManyToOne
     @JoinColumn(name = "summary_id") // <== 跟你資料表一致
