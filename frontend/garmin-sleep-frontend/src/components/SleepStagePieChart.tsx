@@ -101,6 +101,7 @@ const SleepStagePieChart = ({ date }: SleepStagePieChartProps) => {
     return (
         <div className="bg-white p-6 rounded-lg shadow-md h-full">
             <h2 className="text-lg font-medium text-gray-800 mb-4">睡眠階段比例</h2>
+            <p className="text-sm text-gray-500 mb-4">{formatDate(date)}</p>
             <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                     <Pie

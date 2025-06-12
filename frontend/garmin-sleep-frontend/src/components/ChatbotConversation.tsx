@@ -43,7 +43,7 @@ const ChatbotConversation: React.FC<ChatbotConversationProps> = ({ selectedDate 
                 body: JSON.stringify({ question, date: formatDate(selectedDate) }),
             });
             const data = await res.json();
-            setMessages((prev) => [...prev, { role: "bot", content: data.answer }]);
+            setMessages((prev) => [...prev, { role: "bot", content: `**[資料日期：${formatDate(selectedDate)}]**\n\n${data.answer}` }]);
         } catch (err) {
             setMessages((prev) => [...prev, { role: "bot", content: "Error getting response." }]);
         } finally {
