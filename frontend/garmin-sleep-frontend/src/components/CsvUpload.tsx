@@ -38,14 +38,28 @@ const CsvUpload = () => {
 
     setUploading(true)
 
-    // Simulate upload process
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const formData = new FormData()
+      formData.append("file", file)
 
-      setUploadStatus({
-        success: true,
-        message: "File uploaded successfully",
+      const response = await fetch("/api/upload-csv", {
+        method: "POST",
+        body: formData,
       })
+
+      if (response.ok) {
+        const result = await response.text()
+        setUploadStatus({
+          success: true,
+          message: result || "File uploaded successfully",
+        })
+      } else {
+        const errorText = await response.text()
+        setUploadStatus({
+          success: false,
+          message: errorText || "Upload failed. Please try again.",
+        })
+      }
     } catch (error) {
       setUploadStatus({
         success: false,
@@ -54,6 +68,7 @@ const CsvUpload = () => {
     } finally {
       setUploading(false)
     }
+
   }
 
   return (

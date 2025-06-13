@@ -32,5 +32,4 @@ out/
 
 # ========= Python - 處理資料的腳本 =========
 *.csv
-backend/src/main/resources/application.properties
-.env
+backend/.env
