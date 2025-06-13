@@ -1,17 +1,22 @@
-FROM openjdk:17-jdk-slim
-
+# Build stage
+FROM eclipse-temurin:17 AS builder
 WORKDIR /app
 
-COPY .mvn .mvn
-COPY mvnw .
-RUN chmod +x mvnw
+# 複製專案程式碼
+COPY . .
 
-COPY pom.xml .
-COPY src ./src
+# 確保 Maven Wrapper 可執行
+RUN chmod +x ./mvnw
 
+# 建置 jar
 RUN ./mvnw clean package -DskipTests
-RUN mv target/*.jar app.jar
 
-EXPOSE 8000
+# Run stage
+FROM eclipse-temurin:17
+WORKDIR /app
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# 複製 jar 成品
+COPY --from=builder /app/target/*.jar app.jar
+
+# 執行 Spring Boot
+CMD ["java", "-jar", "app.jar"]

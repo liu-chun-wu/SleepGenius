@@ -1,40 +1,16 @@
-version: "3.8"
-
 services:
   backend:
+    container_name: garmin-backend
     build: ./backend
-    container_name: plagiarismdetector-backend
+    ports:
+      - "8000:8000"
     restart: always
-    # ports:
-    #   - "${BACKEND_PORT}:${BACKEND_PORT}"
-    expose:
-      - "${BACKEND_PORT}"
-    environment:
-      - OPENAI_APIKEY=${OPENAI_APIKEY}
-      - GEMINI_APIKEY=${GEMINI_APIKEY}
-      - BACKEND_PORT=${BACKEND_PORT}
-      - BACKEND_API_URL_TEXT_GENERATE=${BACKEND_API_URL_TEXT_GENERATE}
-      - BACKEND_API_URL_TEXT_PARAPHRASE=${BACKEND_API_URL_TEXT_PARAPHRASE}
-      - BACKEND_API_URL_PDF_GENERATE=${BACKEND_API_URL_PDF_GENERATE}
-      - BACKEND_API_URL_PDF_PARAPHRASE=${BACKEND_API_URL_PDF_PARAPHRASE}
     volumes:
-      - ./backend:/app
       - ./nginx_logs:/var/log/nginx
-      - ./backend/dataset:/app/dataset
-    working_dir: /app
-    entrypoint: ["/bin/bash", "/app/entrypoint.sh"]
     env_file:
       - .env
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    runtime: nvidia
     networks:
-      - plagiarism-detector-network
+      - SleepGenius-network
     logging:
       driver: fluentd
       options:
@@ -49,29 +25,19 @@ services:
         condition: service_healthy
 
   frontend:
-    build:
-      context: ./frontend/react_ui
-      args:
-        FRONTEND_PORT: ${FRONTEND_PORT}
-        VITE_API_URL_BACKEND: ${VITE_API_URL_BACKEND}
-        VITE_API_URL_TEXT_PARAPHRASED: ${VITE_API_URL_TEXT_PARAPHRASED}
-        VITE_API_URL_TEXT_GENERATED: ${VITE_API_URL_TEXT_GENERATED}
-        VITE_API_URL_PDF_PARAPHRASED: ${VITE_API_URL_PDF_PARAPHRASED}
-        VITE_API_URL_PDF_GENERATED: ${VITE_API_URL_PDF_GENERATED}
-    container_name: plagiarismdetector-frontend
-    restart: always
+    container_name: garmin-frontend
+    build: ./frontend/garmin-sleep-frontend
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "8080:8080"
+    restart: always
     depends_on:
       backend:
         condition: service_started
     volumes:
       - static_volume:/usr/share/nginx/html/static
       - ./nginx_logs:/var/log/nginx
-    env_file:
-      - .env
     networks:
-      - plagiarism-detector-network
+      - SleepGenius-network
     logging:
       driver: fluentd
       options:
@@ -91,11 +57,14 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - plagiarism-detector-network
+      - SleepGenius-network
     volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - /mnt/Agents4Financial/PlagiarismDetector/elasticsearch_data:/usr/share/elasticsearch/data
-      - /mnt/Agents4Financial/PlagiarismDetector/es_tmp:/usr/share/elasticsearch/tmp  # ✅ 新增：將主機資料夾掛載為容器 tmp 目錄
+      - esdata:/usr/share/elasticsearch/data
+      - estmp:/usr/share/elasticsearch/tmp
+    command: >
+      bash -c "mkdir -p /usr/share/elasticsearch/tmp &&
+               chown -R 1000:0 /usr/share/elasticsearch/tmp &&
+               exec /usr/local/bin/docker-entrypoint.sh"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
       interval: 30s
@@ -111,9 +80,9 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - SERVER_PUBLICBASEURL=http://140.115.54.162:5601
+      - SERVER_PUBLICBASEURL=http://localhost:5601
     networks:
-      - plagiarism-detector-network
+      - SleepGenius-network
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -135,7 +104,7 @@ services:
       - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
       - ./nginx_logs:/fluentd/nginxlog
     networks:
-      - plagiarism-detector-network
+      - SleepGenius-network
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -153,6 +122,8 @@ services:
   #     - plagiarism-detector-network
 volumes:
   static_volume:
+  esdata:
+  estmp:
 
 networks:
-  plagiarism-detector-network:
+  SleepGenius-network:
