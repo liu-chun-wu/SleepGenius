@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: garmin-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,7 +9,8 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - backend-network
+      - SleepGenius-network
 
 networks:
-  backend-network:
+  SleepGenius-network:
+    external: true   

@@ -1,19 +1,14 @@
-version: "3.8"
 services:
   frontend:
+    container_name: garmin-frontend
     build:
-      context: ../..
+      context: .
       dockerfile: Dockerfile
-      args:
-        FRONTEND_PORT: ${FRONTEND_PORT}
-        VITE_API_URL_BACKEND: ${VITE_API_URL_BACKEND}
-        VITE_API_URL_TEXT_PARAPHRASED: ${VITE_API_URL_TEXT_PARAPHRASED}
-        VITE_API_URL_TEXT_GENERATED: ${VITE_API_URL_TEXT_GENERATED}
-        VITE_API_URL_PDF_PARAPHRASED: ${VITE_API_URL_PDF_PARAPHRASED}
-        VITE_API_URL_PDF_GENERATED: ${VITE_API_URL_PDF_GENERATED}
-    container_name: react-frontend
-    restart: always
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    env_file:
-      - .env
+      - "8080:8080"
+    networks:
+      - SleepGenius-network
+
+networks:
+  SleepGenius-network:
+    external: true   
