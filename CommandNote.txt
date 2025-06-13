@@ -1,0 +1,63 @@
+# list all containers / images 
+docker ps -a
+docker images -a
+
+# delete all containers / images 
+docker rm $(docker ps -aq)
+docker rmi $(docker images -q)
+
+# clear grabage
+## 1. 清掉 dangling images (build 後沒用到的 image 本身)
+docker images -f "dangling=true" -q | xargs docker rmi -f
+
+## 2. 清掉 build cache (build 時的 intermediate layer)
+docker builder prune --all
+
+
+## 3. 清掉目前沒有使用的 containers/images/volumes(要小心)
+docker system prune -a --volumes -f
+
+## container operation
+docker start vm1
+docker stop vm1
+docker exec -it vm1 bash
+
+# build and run
+docker compose up --build -d
+docker compose down
+
+
+docker compose -f docker-compose-backend-only.yml up --build -d
+
+docker compose -f backend/docker-compose-backend-only.yml up --build 
+
+docker-compose -f docker-compose-backend-only.yml down
+
+# restart container
+docker-compose restart plagiarismdetector-backend
+
+# add additional tag to local image (2 possible reason)
+1. perpare to push to remote repository
+2. mark different version or usage
+docker tag plagiarismdetector-backend:latest  jeffery426/plagiarismdetector-backend:latest
+
+# push image to remote repository
+docker push jeffery426/plagiarismdetector-backend:latest
+
+# pull image from remote repository
+docker pull jeffery426/plagiarismdetector-backend:latest
+
+# list container logs
+docker logs plagiarismdetector-backend
+
+# check overall disk usage (if disk space is not enough)
+docker system df
+
+# check container disk usage (real-time)
+docker stats
+
+# get container PID
+docker inspect --format '{{.State.Pid}}' plagiarismdetector-backend
+
+# watch GPU usage in real-time
+watch -n 1 nvidia-smi

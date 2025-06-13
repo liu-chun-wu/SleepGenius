@@ -1,0 +1,158 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: plagiarismdetector-backend
+    restart: always
+    # ports:
+    #   - "${BACKEND_PORT}:${BACKEND_PORT}"
+    expose:
+      - "${BACKEND_PORT}"
+    environment:
+      - OPENAI_APIKEY=${OPENAI_APIKEY}
+      - GEMINI_APIKEY=${GEMINI_APIKEY}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - BACKEND_API_URL_TEXT_GENERATE=${BACKEND_API_URL_TEXT_GENERATE}
+      - BACKEND_API_URL_TEXT_PARAPHRASE=${BACKEND_API_URL_TEXT_PARAPHRASE}
+      - BACKEND_API_URL_PDF_GENERATE=${BACKEND_API_URL_PDF_GENERATE}
+      - BACKEND_API_URL_PDF_PARAPHRASE=${BACKEND_API_URL_PDF_PARAPHRASE}
+    volumes:
+      - ./backend:/app
+      - ./nginx_logs:/var/log/nginx
+      - ./backend/dataset:/app/dataset
+    working_dir: /app
+    entrypoint: ["/bin/bash", "/app/entrypoint.sh"]
+    env_file:
+      - .env
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    runtime: nvidia
+    networks:
+      - plagiarism-detector-network
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: backend.log
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      fluentd:
+        condition: service_started
+      kibana:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend/react_ui
+      args:
+        FRONTEND_PORT: ${FRONTEND_PORT}
+        VITE_API_URL_BACKEND: ${VITE_API_URL_BACKEND}
+        VITE_API_URL_TEXT_PARAPHRASED: ${VITE_API_URL_TEXT_PARAPHRASED}
+        VITE_API_URL_TEXT_GENERATED: ${VITE_API_URL_TEXT_GENERATED}
+        VITE_API_URL_PDF_PARAPHRASED: ${VITE_API_URL_PDF_PARAPHRASED}
+        VITE_API_URL_PDF_GENERATED: ${VITE_API_URL_PDF_GENERATED}
+    container_name: plagiarismdetector-frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - static_volume:/usr/share/nginx/html/static
+      - ./nginx_logs:/var/log/nginx
+    env_file:
+      - .env
+    networks:
+      - plagiarism-detector-network
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: frontend.log
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_TMPDIR=/usr/share/elasticsearch/tmp  # ✅ 新增：指定暫存路徑
+    restart: always
+    mem_limit: 2g
+    ports:
+      - "9200:9200"
+    networks:
+      - plagiarism-detector-network
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /mnt/Agents4Financial/PlagiarismDetector/elasticsearch_data:/usr/share/elasticsearch/data
+      - /mnt/Agents4Financial/PlagiarismDetector/es_tmp:/usr/share/elasticsearch/tmp  # ✅ 新增：將主機資料夾掛載為容器 tmp 目錄
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_PUBLICBASEURL=http://140.115.54.162:5601
+    networks:
+      - plagiarism-detector-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    restart: always
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
+      - ./nginx_logs:/fluentd/nginxlog
+    networks:
+      - plagiarism-detector-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  # cleaner:
+  #   image: alpine:latest
+  #   container_name: cleaner
+  #   volumes:
+  #     - ./scripts:/scripts
+  #   entrypoint: ["/bin/sh", "-c", "apk add --no-cache curl bash && while true; do /scripts/es_cleanup.sh; sleep 172800; done"]
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   networks:
+  #     - plagiarism-detector-network
+volumes:
+  static_volume:
+
+networks:
+  plagiarism-detector-network:
